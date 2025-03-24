@@ -6,7 +6,7 @@ __pycache__/
 venv/
 *.env
 *.venv
-
+/bohlalefinanceengine/node_modules/
 # Jupyter Notebook related
 .ipynb_checkpoints/
 *.nbconvert*
