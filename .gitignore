@@ -1,0 +1,21 @@
+# Python-related
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+venv/
+*.env
+*.venv
+
+# Jupyter Notebook related
+.ipynb_checkpoints/
+*.nbconvert*
+
+# VSCode-related
+.vscode/
+
+# Other IDEs or editors
+.idea/
+*.swp
+*.swo
+*.sublime-work
