@@ -1,3 +1,4 @@
+import 'package:bohlalefinance/Home/pages/dept/dept.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   List<Widget> _buildScreens() {
     return [
       // MainScreen(),
-    Container(child: Center(child: Text("data"),),),
+    DeptScreen(),
     Container(child: Center(child: Text("text"),),)
     ];
   }
@@ -26,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     return [
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.healing_outlined),
-        title: ("Appointments"),
+        title: ("Home"),
         activeColorPrimary: CupertinoColors.activeBlue,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
