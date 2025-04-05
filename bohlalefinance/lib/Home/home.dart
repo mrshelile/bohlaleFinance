@@ -1,4 +1,7 @@
+import 'package:bohlalefinance/Home/pages/FinancialDetails/FinancialDetails.dart';
+import 'package:bohlalefinance/Home/pages/Main/Main.dart';
 import 'package:bohlalefinance/Home/pages/dept/dept.dart';
+import 'package:bohlalefinance/Home/pages/financialinsights/financialinsights.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,27 +21,33 @@ class _HomePageState extends State<HomePage> {
   List<Widget> _buildScreens() {
     return [
       // MainScreen(),
-    DeptScreen(),
-    Container(child: Center(child: Text("text"),),)
+    MainPage(),
+    FinancialInsightsChart(),
+    Financialdetails(),
     ];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: const Icon(Icons.healing_outlined),
+        icon: const Icon(Icons.dashboard),
         title: ("Home"),
         activeColorPrimary: CupertinoColors.activeBlue,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       
       PersistentBottomNavBarItem(
-          icon: const Icon(Icons.medical_information),
-          title: ("Medical Records"),
+          icon: const Icon(Icons.insights),
+          title: ("Financial Insights"),
           activeColorPrimary: CupertinoColors.activeBlue,
           inactiveColorPrimary: CupertinoColors.systemGrey,
         ),
-
+       PersistentBottomNavBarItem(
+          icon: const Icon(Icons.info),
+          title: ("Financial details"),
+          activeColorPrimary: CupertinoColors.activeBlue,
+          inactiveColorPrimary: CupertinoColors.systemGrey,
+        ),
     ];
   }
 

@@ -1,12 +1,12 @@
 import 'package:bohlalefinance/Home/home.dart';
-import 'package:bohlalefinance/Home/pages/dept/dept.dart';
-import 'package:bohlalefinance/Home/test.dart';
 import 'package:bohlalefinance/util/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 
 class OnBoarding extends StatelessWidget {
+  const OnBoarding({super.key});
+
 
   @override
   Widget build(BuildContext context) {
