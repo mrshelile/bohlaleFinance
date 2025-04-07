@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class FinancialInsightsChart extends StatelessWidget {
-  final double currentSavings=500;
-  final double savingsTarget=20000;
-  final double totalDebt=3000;
-  final double monthlyIncome=3000;
-  
+  final double currentSavings = 500;
+  final double savingsTarget = 20000;
+  final double totalDebt = 3000;
+  final double monthlyIncome = 3000;
+
   FinancialInsightsChart({Key? key}) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -70,7 +70,10 @@ class FinancialInsightsChart extends StatelessWidget {
                       BarChartRodData(
                         fromY: 0,
                         toY: currentSavings,
-                        color: currentSavings >= savingsTarget ? Colors.green : Colors.red,
+                        color:
+                            currentSavings >= savingsTarget
+                                ? Colors.green
+                                : Colors.red,
                         width: 30,
                       ),
                     ],
@@ -125,14 +128,15 @@ class FinancialInsightsChart extends StatelessWidget {
                     sideTitles: SideTitles(
                       showTitles: true,
                       reservedSize: 28,
-                      getTitlesWidget: (value, meta) => Text(
-                        value.toString(),
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
+                      getTitlesWidget:
+                          (value, meta) => Text(
+                            value.toString(),
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
                     ),
                   ),
                 ),
@@ -144,9 +148,12 @@ class FinancialInsightsChart extends StatelessWidget {
                       BarChartRodData(
                         fromY: 0,
                         toY: totalDebt / monthlyIncome,
-                        color: totalDebt / monthlyIncome < 0.3
-                            ? Colors.green
-                            : (totalDebt / monthlyIncome < 0.6 ? Colors.orange : Colors.red),
+                        color:
+                            totalDebt / monthlyIncome < 0.3
+                                ? Colors.green
+                                : (totalDebt / monthlyIncome < 0.6
+                                    ? Colors.orange
+                                    : Colors.red),
                         width: 40,
                       ),
                     ],

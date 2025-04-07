@@ -16,7 +16,9 @@ class _SplashscreenState extends State<Splashscreen> {
     Future.delayed(const Duration(seconds: 5), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => OnBoarding()), // Replace `NextPage` with your target page.
+        MaterialPageRoute(
+          builder: (context) => OnBoarding(),
+        ), // Replace `NextPage` with your target page.
       );
     });
   }

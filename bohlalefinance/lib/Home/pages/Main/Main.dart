@@ -4,7 +4,6 @@ import 'package:bohlalefinance/util/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 
-
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -15,10 +14,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int selectedValue = 0;
 
-  final List<Widget> _pages = [
-    AddAssets(),
-    AddExpenses(),
-  ];
+  final List<Widget> _pages = [AddAssets(), AddExpenses()];
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +43,10 @@ class _MainPageState extends State<MainPage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 10,
+                            ),
                           ),
                           child: Text(
                             "Assets",
@@ -66,7 +65,10 @@ class _MainPageState extends State<MainPage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 10,
+                            ),
                           ),
                           child: Text(
                             "Expenses",
@@ -116,19 +118,15 @@ class _MainPageState extends State<MainPage> {
                           "Total Income",
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
+                        SizedBox(height: 10),
                         Text(
                           "R 5000",
                           style: TextStyle(color: Colors.white, fontSize: 20),
-                        )
+                        ),
                       ],
                     ),
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
+                  SizedBox(width: 10),
                   Container(
                     decoration: BoxDecoration(
                       color: AppColors.mainColor,
@@ -143,13 +141,11 @@ class _MainPageState extends State<MainPage> {
                           "Total Expenses",
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
+                        SizedBox(height: 10),
                         Text(
                           "R 5000",
                           style: TextStyle(color: Colors.white, fontSize: 20),
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -161,9 +157,10 @@ class _MainPageState extends State<MainPage> {
               Text(
                 "Assets",
                 style: TextStyle(
-                    color: AppColors.accentColor,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
+                  color: AppColors.accentColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               Container(
                 height: MediaQuery.of(context).copyWith().size.height * 0.35,
@@ -176,14 +173,22 @@ class _MainPageState extends State<MainPage> {
                       elevation: 4,
                       margin: EdgeInsets.symmetric(vertical: 8),
                       child: ListTile(
-                        leading: Icon(Icons.account_balance_wallet,
-                            color: AppColors.accentColor),
-                        title: Text("Investement",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        leading: Icon(
+                          Icons.account_balance_wallet,
+                          color: AppColors.accentColor,
+                        ),
+                        title: Text(
+                          "Investement",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         subtitle: Text("M300"),
-                        trailing: Icon(Icons.cases_outlined,
-                            color: AppColors.accentColor),
+                        trailing: Icon(
+                          Icons.cases_outlined,
+                          color: AppColors.accentColor,
+                        ),
                         onTap: () {
                           // Handle tap event
                         },
@@ -198,9 +203,10 @@ class _MainPageState extends State<MainPage> {
               Text(
                 "Expenses",
                 style: TextStyle(
-                    color: AppColors.accentColor,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
+                  color: AppColors.accentColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               Container(
                 height: MediaQuery.of(context).copyWith().size.height * 0.4,
@@ -213,14 +219,22 @@ class _MainPageState extends State<MainPage> {
                       elevation: 4,
                       margin: EdgeInsets.symmetric(vertical: 8),
                       child: ListTile(
-                        leading: Icon(Icons.account_balance_wallet,
-                            color: AppColors.accentColor),
-                        title: Text("Groceries",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        leading: Icon(
+                          Icons.account_balance_wallet,
+                          color: AppColors.accentColor,
+                        ),
+                        title: Text(
+                          "Groceries",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         subtitle: Text("M499"),
-                        trailing: Icon(Icons.holiday_village,
-                            color: AppColors.accentColor),
+                        trailing: Icon(
+                          Icons.holiday_village,
+                          color: AppColors.accentColor,
+                        ),
                         onTap: () {
                           // Handle tap event
                         },
@@ -236,4 +250,3 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
-

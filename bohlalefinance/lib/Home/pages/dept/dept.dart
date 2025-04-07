@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class FinancialPlanningForm extends StatefulWidget {
   @override
   _FinancialPlanningFormState createState() => _FinancialPlanningFormState();
@@ -10,27 +9,36 @@ class _FinancialPlanningFormState extends State<FinancialPlanningForm> {
   final _formKey = GlobalKey<FormState>();
 
   // Income Section Controllers
-  final TextEditingController _primaryIncomeController = TextEditingController();
-  final TextEditingController _secondaryIncomeController = TextEditingController();
+  final TextEditingController _primaryIncomeController =
+      TextEditingController();
+  final TextEditingController _secondaryIncomeController =
+      TextEditingController();
   final TextEditingController _otherIncomeController = TextEditingController();
 
   // Expenses Section Controllers
   final TextEditingController _rentController = TextEditingController();
   final TextEditingController _utilitiesController = TextEditingController();
   final TextEditingController _groceriesController = TextEditingController();
-  final TextEditingController _transportationController = TextEditingController();
-  final TextEditingController _entertainmentController = TextEditingController();
-  final TextEditingController _miscellaneousController = TextEditingController();
+  final TextEditingController _transportationController =
+      TextEditingController();
+  final TextEditingController _entertainmentController =
+      TextEditingController();
+  final TextEditingController _miscellaneousController =
+      TextEditingController();
 
   // Debt Section Controllers
   final TextEditingController _debtAmountController = TextEditingController();
   final TextEditingController _debtInterestController = TextEditingController();
-  final TextEditingController _debtMonthlyPaymentController = TextEditingController();
+  final TextEditingController _debtMonthlyPaymentController =
+      TextEditingController();
 
   // Savings & Goals Section Controllers
-  final TextEditingController _currentSavingsController = TextEditingController();
-  final TextEditingController _emergencyFundController = TextEditingController();
-  final TextEditingController _shortTermGoalController = TextEditingController();
+  final TextEditingController _currentSavingsController =
+      TextEditingController();
+  final TextEditingController _emergencyFundController =
+      TextEditingController();
+  final TextEditingController _shortTermGoalController =
+      TextEditingController();
   final TextEditingController _longTermGoalController = TextEditingController();
 
   @override
@@ -58,27 +66,36 @@ class _FinancialPlanningFormState extends State<FinancialPlanningForm> {
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       // Collect Income Data
-      double primaryIncome = double.tryParse(_primaryIncomeController.text) ?? 0;
-      double secondaryIncome = double.tryParse(_secondaryIncomeController.text) ?? 0;
+      double primaryIncome =
+          double.tryParse(_primaryIncomeController.text) ?? 0;
+      double secondaryIncome =
+          double.tryParse(_secondaryIncomeController.text) ?? 0;
       double otherIncome = double.tryParse(_otherIncomeController.text) ?? 0;
 
       // Collect Expense Data
       double rent = double.tryParse(_rentController.text) ?? 0;
       double utilities = double.tryParse(_utilitiesController.text) ?? 0;
       double groceries = double.tryParse(_groceriesController.text) ?? 0;
-      double transportation = double.tryParse(_transportationController.text) ?? 0;
-      double entertainment = double.tryParse(_entertainmentController.text) ?? 0;
-      double miscellaneous = double.tryParse(_miscellaneousController.text) ?? 0;
+      double transportation =
+          double.tryParse(_transportationController.text) ?? 0;
+      double entertainment =
+          double.tryParse(_entertainmentController.text) ?? 0;
+      double miscellaneous =
+          double.tryParse(_miscellaneousController.text) ?? 0;
 
       // Collect Debt Data
       double debtAmount = double.tryParse(_debtAmountController.text) ?? 0;
       double debtInterest = double.tryParse(_debtInterestController.text) ?? 0;
-      double debtMonthlyPayment = double.tryParse(_debtMonthlyPaymentController.text) ?? 0;
+      double debtMonthlyPayment =
+          double.tryParse(_debtMonthlyPaymentController.text) ?? 0;
 
       // Collect Savings & Goals Data
-      double currentSavings = double.tryParse(_currentSavingsController.text) ?? 0;
-      double emergencyFundTarget = double.tryParse(_emergencyFundController.text) ?? 0;
-      double shortTermGoal = double.tryParse(_shortTermGoalController.text) ?? 0;
+      double currentSavings =
+          double.tryParse(_currentSavingsController.text) ?? 0;
+      double emergencyFundTarget =
+          double.tryParse(_emergencyFundController.text) ?? 0;
+      double shortTermGoal =
+          double.tryParse(_shortTermGoalController.text) ?? 0;
       double longTermGoal = double.tryParse(_longTermGoalController.text) ?? 0;
 
       // Process data or send to your AI model for planning
@@ -86,11 +103,17 @@ class _FinancialPlanningFormState extends State<FinancialPlanningForm> {
       print("Secondary Income: $secondaryIncome");
       print("Other Income: $otherIncome");
 
-      print("Rent: $rent, Utilities: $utilities, Groceries: $groceries, Transportation: $transportation, Entertainment: $entertainment, Misc: $miscellaneous");
+      print(
+        "Rent: $rent, Utilities: $utilities, Groceries: $groceries, Transportation: $transportation, Entertainment: $entertainment, Misc: $miscellaneous",
+      );
 
-      print("Debt Amount: $debtAmount, Interest Rate: $debtInterest, Monthly Payment: $debtMonthlyPayment");
+      print(
+        "Debt Amount: $debtAmount, Interest Rate: $debtInterest, Monthly Payment: $debtMonthlyPayment",
+      );
 
-      print("Current Savings: $currentSavings, Emergency Fund Target: $emergencyFundTarget");
+      print(
+        "Current Savings: $currentSavings, Emergency Fund Target: $emergencyFundTarget",
+      );
       print("Short Term Goal: $shortTermGoal, Long Term Goal: $longTermGoal");
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -102,9 +125,7 @@ class _FinancialPlanningFormState extends State<FinancialPlanningForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Financial Planning Input'),
-      ),
+      appBar: AppBar(title: Text('Financial Planning Input')),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0),
@@ -114,7 +135,10 @@ class _FinancialPlanningFormState extends State<FinancialPlanningForm> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Income Section
-                Text('Income', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(
+                  'Income',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 SizedBox(height: 8),
                 TextFormField(
                   controller: _primaryIncomeController,
@@ -123,7 +147,11 @@ class _FinancialPlanningFormState extends State<FinancialPlanningForm> {
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.number,
-                  validator: (value) => value == null || value.isEmpty ? 'Enter primary income' : null,
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty
+                              ? 'Enter primary income'
+                              : null,
                 ),
                 SizedBox(height: 8),
                 TextFormField(
@@ -146,7 +174,10 @@ class _FinancialPlanningFormState extends State<FinancialPlanningForm> {
                 SizedBox(height: 16),
 
                 // Expenses Section
-                Text('Expenses', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(
+                  'Expenses',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 SizedBox(height: 8),
                 TextFormField(
                   controller: _rentController,
@@ -155,7 +186,11 @@ class _FinancialPlanningFormState extends State<FinancialPlanningForm> {
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.number,
-                  validator: (value) => value == null || value.isEmpty ? 'Enter rent or mortgage' : null,
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty
+                              ? 'Enter rent or mortgage'
+                              : null,
                 ),
                 SizedBox(height: 8),
                 TextFormField(
@@ -205,7 +240,10 @@ class _FinancialPlanningFormState extends State<FinancialPlanningForm> {
                 SizedBox(height: 16),
 
                 // Debt Section
-                Text('Debt Information', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(
+                  'Debt Information',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 SizedBox(height: 8),
                 TextFormField(
                   controller: _debtAmountController,
@@ -236,7 +274,10 @@ class _FinancialPlanningFormState extends State<FinancialPlanningForm> {
                 SizedBox(height: 16),
 
                 // Savings & Goals Section
-                Text('Savings & Goals', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(
+                  'Savings & Goals',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 SizedBox(height: 8),
                 TextFormField(
                   controller: _currentSavingsController,

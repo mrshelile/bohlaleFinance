@@ -5,9 +5,7 @@ class Test extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Dashboard'),
-      ),
+      appBar: AppBar(title: Text('Dashboard')),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -103,7 +101,11 @@ class Test extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _buildQuickAccessButton(context, 'Goals', Icons.flag),
-                  _buildQuickAccessButton(context, 'Budget', Icons.account_balance_wallet),
+                  _buildQuickAccessButton(
+                    context,
+                    'Budget',
+                    Icons.account_balance_wallet,
+                  ),
                   _buildQuickAccessButton(context, 'Reports', Icons.bar_chart),
                 ],
               ),
@@ -114,13 +116,14 @@ class Test extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickAccessButton(BuildContext context, String label, IconData icon) {
+  Widget _buildQuickAccessButton(
+    BuildContext context,
+    String label,
+    IconData icon,
+  ) {
     return Column(
       children: [
-        CircleAvatar(
-          radius: 30,
-          child: Icon(icon, size: 30),
-        ),
+        CircleAvatar(radius: 30, child: Icon(icon, size: 30)),
         SizedBox(height: 5),
         SelectableText(label),
       ],
