@@ -1,10 +1,8 @@
 import 'package:bohlalefinance/Home/pages/FinancialDetails/FinancialDetails.dart';
 import 'package:bohlalefinance/Home/pages/Main/Main.dart';
-import 'package:bohlalefinance/Home/pages/dept/dept.dart';
 import 'package:bohlalefinance/Home/pages/financialinsights/financialinsights.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 class HomePage extends StatefulWidget {

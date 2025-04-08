@@ -39,7 +39,7 @@ class OnBoarding extends StatelessWidget {
                 SizedBox(height: size.height * 0.03),
                 TextButton(
                   style: ButtonStyle(
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18.0),
                         side: const BorderSide(color: Colors.teal, width: 2.0),
