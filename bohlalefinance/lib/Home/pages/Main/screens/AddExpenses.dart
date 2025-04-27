@@ -39,26 +39,6 @@ class _AddExpensesState extends State<AddExpenses> {
             const SizedBox(height: 16),
             TextField(
               decoration: InputDecoration(
-                labelText: 'Date',
-                border: OutlineInputBorder(),
-                suffixIcon: Icon(Icons.calendar_today),
-              ),
-              readOnly: true,
-              onTap: () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2101),
-                );
-                if (pickedDate != null) {
-                  // Handle date selection
-                }
-              },
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              decoration: InputDecoration(
                 labelText: 'Category',
                 border: OutlineInputBorder(),
               ),

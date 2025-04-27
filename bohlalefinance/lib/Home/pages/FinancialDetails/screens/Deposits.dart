@@ -30,14 +30,7 @@ class _DepositsFormState extends State<DepositsForm> {
               ),
               keyboardType: TextInputType.number,
             ),
-            const SizedBox(height: 16),
-            TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Date',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.datetime,
-            ),
+          
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(
