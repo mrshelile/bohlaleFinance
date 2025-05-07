@@ -1,17 +1,19 @@
 import 'package:uuid/uuid.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
-import 'package:bohlalefinance/models/models.dart';
+import 'package:bohlalefinance/models/database.dart';
 
 class Deposit {
   final String id;
   final String name;
   final double amount;
+  final String category;
   String date;
 
   Deposit({
     String? id,
     required this.name,
     required this.amount,
+    required this.category,
     String? date,
   })  : id = id ?? const Uuid().v4(),
         date = date ?? DateTime.now().toIso8601String();
@@ -21,6 +23,7 @@ class Deposit {
       'id': id,
       'name': name,
       'amount': amount,
+      'category': category,
       'date': date,
     };
   }
@@ -30,6 +33,7 @@ class Deposit {
       id: map['id'],
       name: map['name'],
       amount: map['amount'],
+      category: map['category'],
       date: map['date'],
     );
   }

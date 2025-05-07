@@ -1,4 +1,4 @@
-import 'package:bohlalefinance/models/models.dart';
+import 'package:bohlalefinance/models/database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 

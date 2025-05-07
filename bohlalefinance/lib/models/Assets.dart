@@ -1,4 +1,4 @@
-import 'package:bohlalefinance/models/models.dart';
+import 'package:bohlalefinance/models/database.dart';
 import 'package:uuid/data.dart';
 import 'package:uuid/uuid.dart';
 import 'package:uuid/rng.dart';
