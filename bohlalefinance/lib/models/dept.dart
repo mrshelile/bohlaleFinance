@@ -5,10 +5,9 @@ import 'package:sqflite_sqlcipher/sqflite.dart';
 class Dept {
   final String id;
   final String date;
-  final double deptAmount;
   final int paymentTerm; // in months
-
-  final double payedAmount;
+  final double minAmount;
+  final double maxAmount;
   final String name;
   final double interest;
 
@@ -17,10 +16,9 @@ class Dept {
     String? date,
     required this.name,
     required this.interest,
-    required this.deptAmount,
+    required this.minAmount,
+    required this.maxAmount,
     required this.paymentTerm,
-
-    required this.payedAmount,
   })  : id = id ?? const Uuid().v4(),
         date = date ?? DateTime.now().toIso8601String();
 
@@ -30,9 +28,9 @@ class Dept {
       'name': name,
       'date': date,
       "interest":interest,
-      'deptAmount': deptAmount,
       'paymentTerm': paymentTerm,
-      'payedAmount': payedAmount,
+      'minAmount': minAmount,
+      'maxAmount': maxAmount,
     };
   }
 
@@ -42,9 +40,9 @@ class Dept {
       name: map['name'],
       id: map['id'],
       date: map['date'],
-      deptAmount: map['deptAmount'],
       paymentTerm: map['paymentTerm'],
-      payedAmount: map['payedAmount'],
+      minAmount: map['minAmount'],
+      maxAmount: map['maxAmount'],
     );
   }
 
@@ -84,11 +82,8 @@ class Dept {
   // Static function to take a loan and insert into taken_loans table
   static Future<void> takeLoan({
     required String loanId,
-    required String name,
     required double amount,
     required int paymentTerm,
-    required double recommendedAmount,
-    required int recommendedTerm,
   }) async {
     final db = await DatabaseHelper.instance.database;
     final id = const Uuid().v4();
@@ -120,7 +115,37 @@ class Dept {
   // Static function to get all taken loans
   static Future<List<Map<String, dynamic>>> getAllTakenLoans() async {
     final db = await DatabaseHelper.instance.database;
-    return await db.query('taken_loans');
+    // Join taken_loans with dept to get dept info (name, interest, etc)
+    final result = await db.rawQuery('''
+      SELECT 
+      taken_loans.id as id,
+      taken_loans.loanId as loanId,
+      taken_loans.amount as amount,
+      taken_loans.paymentTerm as paymentTerm,
+      taken_loans.date as date,
+      taken_loans.paid as paid,
+      dept.name as name,
+      dept.interest as interest,
+      dept.minAmount as minAmount,
+      dept.maxAmount as maxAmount
+      FROM taken_loans
+      LEFT JOIN dept ON taken_loans.loanId = dept.id
+    ''');
+
+    return result.map((map) {
+      return {
+      'id': map['id'],
+      'loanId': map['loanId'],
+      'amount': map['amount'],
+      'paymentTerm': map['paymentTerm'],
+      'date': map['date'],
+      'paid': map['paid'] == 1,
+      'name': map['name'],
+      'interest': map['interest'],
+      'minAmount': map['minAmount'],
+      'maxAmount': map['maxAmount'],
+      };
+    }).toList();
   }
 
   // Static function to get a taken loan by id and return as a Map (toMap)
@@ -134,26 +159,21 @@ class Dept {
       whereArgs: [id],
     );
     if (result.isNotEmpty) {
-      return result.first; // Already a Map<String, dynamic>
+      // Ensure the returned map matches the table structure and types
+      final map = result.first;
+      return {
+        'id': map['id'],
+        'loanId': map['loanId'],
+        'amount': map['amount'],
+        'paymentTerm': map['paymentTerm'],
+        'date': map['date'],
+        'paid': map['paid'] == 1, // convert to bool
+      };
     }
     return null;
   }
 
-  // Static function to get a taken loan by id and return as JSON (toJson)
-  static Future<String?> getTakenLoanByIdAsJson({
-    required String id,
-  }) async {
-    final db = await DatabaseHelper.instance.database;
-    final result = await db.query(
-      'taken_loans',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-    if (result.isNotEmpty) {
-      return result.first.toString(); // Or use jsonEncode(result.first) if you import 'dart:convert'
-    }
-    return null;
-  }
+
   Future<void> delete() async {
     final db = await DatabaseHelper.instance.database;
     await db.delete(

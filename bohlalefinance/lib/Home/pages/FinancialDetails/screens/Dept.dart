@@ -84,28 +84,17 @@ class _DeptFormState extends State<DeptForm> {
                   );
                   return;
                 }
-                final deptAmount = double.tryParse(minAmountController.text) ?? 0.0;
-                if (deptAmount <= 0) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Invalid minimum amount')),
-                  );
-                  return;
-                }
+              
                 final paymentTerm = int.tryParse(paymentTermController.text) ?? 0;
-                if (deptAmount <= 0 || paymentTerm <= 0) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Invalid amount or payment term')),
-                  );
-                  return;
-                }
-                final payedAmount = 0.0;
+               
 
                 final dept = Dept(
+                  minAmount: double.tryParse(minAmountController.text) ?? 0.0,
+                  maxAmount: double.tryParse(maxAmountController.text) ?? 0.0,
+                  paymentTerm: paymentTerm,
+                  date: DateTime.now().toIso8601String(),
                   name: deptController.text,
                   interest: double.tryParse(interestController.text) ?? 0.0,
-                  deptAmount: deptAmount,
-                  paymentTerm: paymentTerm,
-                  payedAmount: payedAmount,
                 );
 
                 await dept.save();

@@ -82,14 +82,14 @@ class DatabaseHelper {
       CREATE TABLE dept (
       id TEXT PRIMARY KEY,
       date TEXT NOT NULL,
-      deptAmount REAL NOT NULL,
+      minAmount REAL NOT NULL,
       paymentTerm INTEGER NOT NULL,
-      payedAmount REAL NOT NULL,
+      maxAmount REAL NOT NULL,
       name TEXT NOT NULL,
       interest REAL NOT NULL
       )
     ''');
-
+    debugPrint('Depts table created');
     await db.execute('''
       CREATE TABLE taken_loans (
       id TEXT PRIMARY KEY,

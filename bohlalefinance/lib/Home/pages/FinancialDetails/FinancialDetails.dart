@@ -130,15 +130,17 @@ class _FinancialdetailsState extends State<Financialdetails> {
                           fontWeight: FontWeight.bold,
                         ),
                         ),
-                        subtitle: Text("M300"),
+                        subtitle: Text("M${dept.maxAmount}"),
                         trailing: Icon(
                         Icons.business_center,
                         color: AppColors.accentColor,
                         ),
                         onTap: () {
-                        double recommendedAmount = 1000.0;
+                        
+                        double recommendedAmount =dept.maxAmount * 0.8; // Example calculation
+                        recommendedAmount;
                         double amount = recommendedAmount;
-                        int recommendedTerm = 12;
+                        int recommendedTerm = dept.paymentTerm;
                         int term = recommendedTerm;
 
                         final parentContext = context;
@@ -171,28 +173,28 @@ class _FinancialdetailsState extends State<Financialdetails> {
                               ),
                               SizedBox(height: 5),
                               SizedBox(height: 10),
-                              Text("Recommended Amount: M$recommendedAmount"),
+                              Text("Recommended Amount: M${recommendedAmount.toStringAsFixed(2)}"),
                               Slider(
                               value: amount,
-                              min: 100,
-                              max: 5000,
-                              divisions: 49,
-                              label: "M${amount.round()}",
+                              min: dept.minAmount,
+                              max: dept.maxAmount,
+                              divisions: ((dept.maxAmount - dept.minAmount) / 100).round(),
+                              label: "M${amount.toStringAsFixed(2)}",
                               onChanged: (value) {
                                 setDialogState(() {
                                 amount = value;
                                 });
                               },
                               ),
-                              Text("Amount to take: M${amount.round()}"),
+                              Text("Amount to take: M${amount.toStringAsFixed(2)}"),
                               SizedBox(height: 10),
                               Text("Recommended Term: $recommendedTerm months"),
                               Slider(
                               value: term.toDouble(),
                               min: 1,
-                              max: 36,
-                              divisions: 35,
-                              label: "${term.round()} months",
+                              max: dept.paymentTerm.toDouble(),
+                              divisions: dept.paymentTerm,
+                              label: "${term} months",
                               onChanged: (value) {
                                 setDialogState(() {
                                 term = value.round();
@@ -216,10 +218,22 @@ class _FinancialdetailsState extends State<Financialdetails> {
                                 ElevatedButton(
                                 onPressed: () {
                                   // Handle loan submission logic here
-                                  Navigator.of(parentContext).pop();
-                                  ScaffoldMessenger.of(parentContext).showSnackBar(
-                                  SnackBar(content: Text("Loan request for ${dept.name} submitted!")),
-                                  );
+                                  // Navigator.of(parentContext).pop();
+                                  Dept.takeLoan(
+                                    loanId: dept.id,
+                                    amount: amount,
+                                    paymentTerm: term,
+                                  ).then((_) {
+                                    Navigator.of(parentContext).pop();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text("Loan taken successfully!")),
+                                    );
+                                  }).catchError((error) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text("Error taking loan: $error")),
+                                    );
+                                  });
+                                
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.mainColor,
@@ -254,68 +268,85 @@ class _FinancialdetailsState extends State<Financialdetails> {
                 ),
                 Container(
                   height: MediaQuery.of(context).copyWith().size.height * 0.25,
-                  child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: AlwaysScrollableScrollPhysics(),
-                  itemCount: 3, // Example: 3 unpaid loans
-                  itemBuilder: (context, index) {
-                    // Example generated data
-                    final unpaidLoan = {
-                    'name': 'Loan ${index + 1}',
-                    'amount': 500 + index * 150,
-                    };
-                    return Card(
-                    elevation: 4,
-                    margin: EdgeInsets.symmetric(vertical: 8),
-                    child: ListTile(
-                      leading: Icon(
-                      Icons.warning_amber_rounded,
-                      color: Colors.redAccent,
-                      ),
-                      title: Text(
-                      unpaidLoan['name'].toString(),
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      ),
-                      subtitle: Text("M${unpaidLoan['amount']}"),
-                      trailing: Icon(
-                      Icons.error_outline,
-                      color: Colors.redAccent,
-                      ),
-                      onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext dialogContext) {
-                        return AlertDialog(
-                          title: Text("Mark as Paid"),
-                          content: Text("Are you sure you want to mark '${unpaidLoan['name']}' as paid?"),
-                          actions: [
-                          TextButton(
-                            onPressed: () {
-                            Navigator.of(dialogContext).pop();
+                  child: FutureBuilder(
+                    future: Dept.getAllTakenLoans(), 
+                    builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    }
+                    final unpaidLoans = snapshot.data as List<Map<String, dynamic>>;
+                    if (unpaidLoans.isEmpty) {
+                      return Center(child: Text('No unpaid loans found.'));
+                    }
+                    print("Unpaid Loans: $unpaidLoans");
+
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: AlwaysScrollableScrollPhysics(),
+                      itemCount: unpaidLoans.length,
+                      itemBuilder: (context, index) {
+                        final unpaidLoan = unpaidLoans[index];
+                        return Card(
+                          elevation: 4,
+                          margin: EdgeInsets.symmetric(vertical: 8),
+                          child: ListTile(
+                            leading: Icon(
+                              unpaidLoan['paid'] ? Icons.check_circle : Icons.warning_amber_rounded,
+                              color: unpaidLoan['paid'] ? Colors.green : Colors.redAccent,
+                            ),
+                            title: Text(
+                              unpaidLoan['name'].toString(),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text("M${(unpaidLoan['amount'] as double).toStringAsFixed(2)}"),
+                        
+                            onTap: () {
+                              if (unpaidLoan['paid']) {
+                                
+                                return;
+                              }
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext dialogContext) {
+                                  return AlertDialog(
+                                    title: Text("Mark as Paid"),
+                                    content: Text("Are you sure you want to mark '${unpaidLoan['name']}' as paid?"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(dialogContext).pop();
+                                        },
+                                        child: Text("Cancel"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          Navigator.of(dialogContext).pop();
+                                          await Dept.updatePaidStatus(
+                                            takenLoanId: unpaidLoan['id'],
+                                            paid: true,
+                                          );
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(content: Text("Loan marked as paid successfully!")),
+                                          );
+                                        },
+                                        child: Text("Confirm"),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
                             },
-                            child: Text("Cancel"),
                           ),
-                          TextButton(
-                            onPressed: () {
-                            Navigator.of(dialogContext).pop();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("${unpaidLoan['name']} marked as paid.")),
-                            );
-                            // Add your logic to mark as paid here
-                            },
-                            child: Text("Confirm"),
-                          ),
-                          ],
                         );
-                        },
-                      );
                       },
-                    ),
                     );
-                  },
+                    }
                   ),
                 ),
               ],
