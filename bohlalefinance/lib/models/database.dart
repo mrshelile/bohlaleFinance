@@ -80,14 +80,25 @@ class DatabaseHelper {
     debugPrint('Expenses table created');
     await db.execute('''
       CREATE TABLE dept (
-        id TEXT PRIMARY KEY,
-        date TEXT NOT NULL,
-        deptAmount REAL NOT NULL,
-        paymentTerm INTEGER NOT NULL,
-        loanId TEXT NOT NULL,
-        payedAmount REAL NOT NULL,
-        name TEXT NOT NULL,
-        interest REAL NOT NULL
+      id TEXT PRIMARY KEY,
+      date TEXT NOT NULL,
+      deptAmount REAL NOT NULL,
+      paymentTerm INTEGER NOT NULL,
+      payedAmount REAL NOT NULL,
+      name TEXT NOT NULL,
+      interest REAL NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE taken_loans (
+      id TEXT PRIMARY KEY,
+      loanId TEXT NOT NULL,
+      amount REAL NOT NULL,
+      paymentTerm INTEGER NOT NULL,
+      date TEXT NOT NULL,
+      paid INTEGER NOT NULL, -- 0 = false, 1 = true
+      FOREIGN KEY (loanId) REFERENCES Loan(id)
       )
     ''');
     debugPrint('Depts table created');

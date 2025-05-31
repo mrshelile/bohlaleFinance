@@ -2,168 +2,164 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class FinancialInsightsChart extends StatelessWidget {
-  final double currentSavings = 500;
-  final double savingsTarget = 20000;
-  final double totalDebt = 3000;
-  final double monthlyIncome = 3000;
+  // Simulate up and down values
+  final List<double> monthlyDebt = [2500, 2700, 2600, 2800, 2700, 2900];
+  final List<String> months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
 
   FinancialInsightsChart({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    List<FlSpot> debtSpots = List.generate(
+      monthlyDebt.length,
+      (i) => FlSpot(i.toDouble(), monthlyDebt[i]),
+    );
+
     return SingleChildScrollView(
       child: Column(
         children: [
-          // Savings vs. Target Chart
+          SizedBox(height: MediaQuery.of(context).copyWith().size.height*0.2,),
           Text(
-            "Savings vs. Target",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            "Debt Growth",
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.indigo[900],
+              letterSpacing: 1.2,
+            ),
           ),
-          SizedBox(
-            height: 250,
-            child: BarChart(
-              BarChartData(
-                alignment: BarChartAlignment.spaceAround,
-                maxY: savingsTarget * 1.2,
-                barTouchData: BarTouchData(enabled: false),
-                titlesData: FlTitlesData(
-                  show: true,
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 32,
-                      getTitlesWidget: (value, meta) {
-                        switch (value.toInt()) {
-                          case 0:
-                            return Text(
-                              'Current',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            );
-                          case 1:
-                            return Text(
-                              'Target',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            );
-                          default:
-                            return Text('');
-                        }
-                      },
-                    ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: true),
-                  ),
-                ),
-                borderData: FlBorderData(show: false),
-                barGroups: [
-                  BarChartGroupData(
-                    x: 0,
-                    barRods: [
-                      BarChartRodData(
-                        fromY: 0,
-                        toY: currentSavings,
-                        color:
-                            currentSavings >= savingsTarget
-                                ? Colors.green
-                                : Colors.red,
-                        width: 30,
-                      ),
-                    ],
-                  ),
-                  BarChartGroupData(
-                    x: 1,
-                    barRods: [
-                      BarChartRodData(
-                        fromY: 0,
-                        toY: savingsTarget,
-                        color: Colors.blue,
-                        width: 30,
-                      ),
-                    ],
+          SizedBox(height: 16),
+          Center(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.indigo.withOpacity(0.08),
+                    blurRadius: 16,
+                    offset: Offset(0, 8),
                   ),
                 ],
               ),
-            ),
-          ),
-          SizedBox(height: 40),
-          // Debt Ratio Chart
-          Text(
-            "Debt Ratio",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(
-            height: 250,
-            child: BarChart(
-              BarChartData(
-                alignment: BarChartAlignment.center,
-                maxY: 1.0,
-                barTouchData: BarTouchData(enabled: false),
-                titlesData: FlTitlesData(
-                  show: true,
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 16,
-                      getTitlesWidget: (value, meta) {
-                        return Text(
-                          'Debt Ratio',
+              margin: EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.all(16),
+              height: 320,
+              width: 400, // Optional: set a fixed width for better centering
+              child: LineChart(
+                LineChartData(
+                  minY: (monthlyDebt.reduce((a, b) => a < b ? a : b) * 0.95),
+                  maxY: (monthlyDebt.reduce((a, b) => a > b ? a : b) * 1.05),
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: true,
+                    horizontalInterval: 200,
+                    verticalInterval: 1,
+                    getDrawingHorizontalLine: (value) => FlLine(
+                      color: Colors.grey[200],
+                      strokeWidth: 1,
+                    ),
+                    getDrawingVerticalLine: (value) => FlLine(
+                      color: Colors.grey[200],
+                      strokeWidth: 1,
+                    ),
+                  ),
+                  titlesData: FlTitlesData(
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 40,
+                        getTitlesWidget: (value, meta) => Text(
+                          value.toInt().toString(),
                           style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                            color: Colors.indigo[700],
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
                           ),
-                        );
-                      },
-                    ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 28,
-                      getTitlesWidget:
-                          (value, meta) => Text(
-                            value.toString(),
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                    ),
-                  ),
-                ),
-                borderData: FlBorderData(show: false),
-                barGroups: [
-                  BarChartGroupData(
-                    x: 0,
-                    barRods: [
-                      BarChartRodData(
-                        fromY: 0,
-                        toY: totalDebt / monthlyIncome,
-                        color:
-                            totalDebt / monthlyIncome < 0.3
-                                ? Colors.green
-                                : (totalDebt / monthlyIncome < 0.6
-                                    ? Colors.orange
-                                    : Colors.red),
-                        width: 40,
+                        ),
                       ),
-                    ],
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 32,
+                        getTitlesWidget: (value, meta) {
+                          int idx = value.toInt();
+                          if (idx >= 0 && idx < months.length) {
+                            return Text(
+                              months[idx],
+                              style: TextStyle(
+                                color: Colors.indigo[700],
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                            );
+                          }
+                          return Text('');
+                        },
+                      ),
+                    ),
+                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   ),
-                ],
+                  borderData: FlBorderData(
+                    show: true,
+                    border: Border.all(color: Colors.indigo[100]!, width: 1),
+                  ),
+                  lineBarsData: [
+                    // Actual debt line
+                    LineChartBarData(
+                      spots: debtSpots,
+                      isCurved: true,
+                      color: Colors.indigo,
+                      barWidth: 4,
+                      dotData: FlDotData(show: true),
+                      belowBarData: BarAreaData(
+                        show: true,
+                        color: Colors.indigo.withOpacity(0.08),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
+          ),
+          SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _legendDot(Colors.indigo),
+              SizedBox(width: 6),
+              Text("Actual Debt", style: TextStyle(fontSize: 14)),
+            ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget _legendDot(Color color, {bool dashed = false}) {
+    return Container(
+      width: 18,
+      height: 6,
+      decoration: BoxDecoration(
+        color: dashed ? Colors.transparent : color,
+        border: dashed ? Border.all(color: color, width: 2) : null,
+        borderRadius: BorderRadius.circular(3),
+      ),
+      child: dashed
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(
+                3,
+                (_) => Container(
+                  width: 3,
+                  height: 6,
+                  color: color,
+                ),
+              ),
+            )
+          : null,
     );
   }
 }
