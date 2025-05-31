@@ -3,7 +3,9 @@ import 'package:bohlalefinance/Home/pages/Main/screens/addAssets.dart';
 import 'package:bohlalefinance/util/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:bohlalefinance/models/Assets.dart';
 
+import '../../../models/expenses.dart';
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -119,9 +121,23 @@ class _MainPageState extends State<MainPage> {
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                         SizedBox(height: 10),
-                        Text(
-                          "R 5000",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        FutureBuilder<double>(
+                          future: Asset.getTotalAmount(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            }
+                            if (snapshot.hasError) {
+                              return Text("Error: ${snapshot.error}");
+                            }
+                            if (!snapshot.hasData || snapshot.data == null) {
+                              return Text("R 0.0");
+                            }
+                            return Text(
+                              "R ${snapshot.data}",
+                              style: TextStyle(color: Colors.white, fontSize: 20),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -142,14 +158,28 @@ class _MainPageState extends State<MainPage> {
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                         SizedBox(height: 10),
-                        Text(
-                          "R 5000",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
-                        ),
-                      ],
-                    ),
+                      FutureBuilder(
+                          future: Expense.getTotalAmount(),
+                          builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          }
+                          if (snapshot.hasError) {
+                            return Text(
+                              "Error: ${snapshot.error}",
+                              style: TextStyle(color: Colors.white, fontSize: 20),
+                            );
+                          }
+                          return Text(
+                            "R ${snapshot.data}",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                ],
+                ),
+              ],
               ),
               SizedBox(
                 height: MediaQuery.of(context).copyWith().size.height * 0.02,
@@ -164,37 +194,51 @@ class _MainPageState extends State<MainPage> {
               ),
               Container(
                 height: MediaQuery.of(context).copyWith().size.height * 0.35,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: AlwaysScrollableScrollPhysics(),
-                  itemCount: 4,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      elevation: 4,
-                      margin: EdgeInsets.symmetric(vertical: 8),
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.account_balance_wallet,
-                          color: AppColors.accentColor,
-                        ),
-                        title: Text(
-                          "Investement",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                child: FutureBuilder(
+                  future: Asset.getAll(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(child: Text("No assets found"));
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.data == null || snapshot.data!.isEmpty) {
+                      return Center(child: Text("No assets found"));
+                    }
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: AlwaysScrollableScrollPhysics(),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          elevation: 4,
+                          margin: EdgeInsets.symmetric(vertical: 8),
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.account_balance_wallet,
+                              color: AppColors.accentColor,
+                            ),
+                            title: Text(
+                              snapshot.data![index].assetName,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text("M${snapshot.data![index].amount}"),
+                            trailing: Icon(
+                              Icons.cases_outlined,
+                              color: AppColors.accentColor,
+                            ),
+                            onTap: () {
+                              // Handle tap event
+                            },
                           ),
-                        ),
-                        subtitle: Text("M300"),
-                        trailing: Icon(
-                          Icons.cases_outlined,
-                          color: AppColors.accentColor,
-                        ),
-                        onTap: () {
-                          // Handle tap event
-                        },
-                      ),
+                        );
+                      },
                     );
-                  },
+                  }
                 ),
               ),
               SizedBox(
@@ -210,37 +254,51 @@ class _MainPageState extends State<MainPage> {
               ),
               Container(
                 height: MediaQuery.of(context).copyWith().size.height * 0.4,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: AlwaysScrollableScrollPhysics(),
-                  itemCount: 4,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      elevation: 4,
-                      margin: EdgeInsets.symmetric(vertical: 8),
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.account_balance_wallet,
-                          color: AppColors.accentColor,
-                        ),
-                        title: Text(
-                          "Groceries",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                child: FutureBuilder(
+                  future: Expense.getAll(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(child: Text("No expenses found"));
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.data == null || snapshot.data!.isEmpty) {
+                      return Center(child: Text("No expenses found"));
+                    }
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: AlwaysScrollableScrollPhysics(),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          elevation: 4,
+                          margin: EdgeInsets.symmetric(vertical: 8),
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.account_balance_wallet,
+                              color: AppColors.accentColor,
+                            ),
+                            title: Text(
+                              snapshot.data![index].name,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text("M${snapshot.data![index].amount}"),
+                            trailing: Icon(
+                              Icons.holiday_village,
+                              color: AppColors.accentColor,
+                            ),
+                            onTap: () {
+                              // Handle tap event
+                            },
                           ),
-                        ),
-                        subtitle: Text("M499"),
-                        trailing: Icon(
-                          Icons.holiday_village,
-                          color: AppColors.accentColor,
-                        ),
-                        onTap: () {
-                          // Handle tap event
-                        },
-                      ),
+                        );
+                      },
                     );
-                  },
+                  }
                 ),
               ),
             ],

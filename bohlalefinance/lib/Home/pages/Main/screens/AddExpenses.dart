@@ -1,6 +1,8 @@
 import 'package:bohlalefinance/models/expenses.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../models/database.dart';
+
 class AddExpenses extends StatefulWidget {
   const AddExpenses({super.key});
 
@@ -43,7 +45,7 @@ class _AddExpensesState extends State<AddExpenses> {
     );
 
     await expense.save();
-
+    // DatabaseHelper.instance.deleteDatabaseFile();
     print('Expense Added:');
     print('Name: ${expense.name}');
     print('Amount: ${expense.amount}');
@@ -56,7 +58,7 @@ class _AddExpensesState extends State<AddExpenses> {
     _amountController.clear();
     _categoryController.clear();
     _notesController.clear();
-
+    Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Expense added successfully!')),
     );

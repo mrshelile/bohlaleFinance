@@ -1,11 +1,11 @@
 import 'package:bohlalefinance/models/database.dart';
 import 'package:uuid/uuid.dart';
-import 'package:sqflite_sqlcipher/sqflite.dart';
+
 class Expense {
   final String id;
   final String name;
   final double amount;
-  String date;
+  final String date;
   final String category;
   final String notes;
 
@@ -29,15 +29,25 @@ class Expense {
       'notes': notes,
     };
   }
-
+  static Future<double> getTotalAmount() async {
+    final db = await DatabaseHelper.instance.database;
+    final result = await db.rawQuery('SELECT SUM(amount) as total FROM expenses');
+    if (result.isNotEmpty && result.first['total'] != null) {
+      return (result.first['total'] as num).toDouble();
+    }
+    return 0.0;
+  }
   static Expense fromMap(Map<String, dynamic> map) {
+    // Defensive mapping with default values
     return Expense(
-      id: map['id'],
-      name: map['name'],
-      amount: map['amount'],
-      date: map['date'],
-      category: map['category'],
-      notes: map['notes'],
+      id: map['id']?.toString(),
+      name: map['name'] ?? '',
+      amount: (map['amount'] is int)
+          ? (map['amount'] as int).toDouble()
+          : (map['amount'] ?? 0.0),
+      date: map['date'] ?? DateTime.now().toIso8601String(),
+      category: map['category'] ?? '',
+      notes: map['notes'] ?? '',
     );
   }
 
@@ -49,7 +59,8 @@ class Expense {
   static Future<List<Expense>> getAll() async {
     final db = await DatabaseHelper.instance.database;
     final result = await db.query('expenses');
-    return result.map((map) => Expense.fromMap(map)).toList();
+    if (result.isEmpty) return [];
+    return result.map((map) => Expense.fromMap(Map<String, dynamic>.from(map))).toList();
   }
 
   static Future<Expense?> getById(String id) async {
@@ -60,7 +71,7 @@ class Expense {
       whereArgs: [id],
     );
     if (result.isNotEmpty) {
-      return Expense.fromMap(result.first);
+      return Expense.fromMap(Map<String, dynamic>.from(result.first));
     }
     return null;
   }

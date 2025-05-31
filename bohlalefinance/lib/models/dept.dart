@@ -9,10 +9,14 @@ class Dept {
   final int paymentTerm; // in months
   final String loanId; // reference to loans table
   final double payedAmount;
+  final String name;
+  final double interest;
 
   Dept({
     String? id,
     String? date,
+    required this.name,
+    required this.interest,
     required this.deptAmount,
     required this.paymentTerm,
     required this.loanId,
@@ -23,7 +27,9 @@ class Dept {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'name': name,
       'date': date,
+      "interest":interest,
       'deptAmount': deptAmount,
       'paymentTerm': paymentTerm,
       'loanId': loanId,
@@ -33,6 +39,8 @@ class Dept {
 
   static Dept fromMap(Map<String, dynamic> map) {
     return Dept(
+      interest: map['interest'],
+      name: map['name'],
       id: map['id'],
       date: map['date'],
       deptAmount: map['deptAmount'],
@@ -44,19 +52,19 @@ class Dept {
 
   Future<void> save() async {
     final db = await DatabaseHelper.instance.database;
-    await db.insert('depts', toMap());
+    await db.insert('dept', toMap());
   }
 
   static Future<List<Dept>> getAll() async {
     final db = await DatabaseHelper.instance.database;
-    final result = await db.query('depts');
+    final result = await db.query('dept');
     return result.map((map) => Dept.fromMap(map)).toList();
   }
 
   static Future<Dept?> getById(String id) async {
     final db = await DatabaseHelper.instance.database;
     final result = await db.query(
-      'depts',
+      'dept',
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -69,7 +77,7 @@ class Dept {
   Future<void> update() async {
     final db = await DatabaseHelper.instance.database;
     await db.update(
-      'depts',
+      'dept',
       toMap(),
       where: 'id = ?',
       whereArgs: [id],
@@ -79,7 +87,7 @@ class Dept {
   Future<void> delete() async {
     final db = await DatabaseHelper.instance.database;
     await db.delete(
-      'depts',
+      'dept',
       where: 'id = ?',
       whereArgs: [id],
     );
