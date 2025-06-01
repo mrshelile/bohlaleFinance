@@ -679,7 +679,7 @@ async def lifespan(app: FastAPI):
     try:
         logger.info("Loading models...")
         reg_pipeline = joblib.load("reg_model_improved.pkl")
-        clf_pipeline = joblib.load("clf_model_improved.pkl")
+        clf_pipeline = joblib.load("clf_model_improved2.pkl")
         term_encoder = LabelEncoder().fit(np.array([12, 24, 36]))
         logger.info("Models loaded successfully")
     except FileNotFoundError as e:
