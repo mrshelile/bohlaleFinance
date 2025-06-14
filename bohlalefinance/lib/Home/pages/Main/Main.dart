@@ -179,6 +179,7 @@ class _MainPageState extends State<MainPage> {
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
                           final asset = snapshot.data![index];
+                          debugPrint("asseting ${asset.toMap()}");
                           return Card(
                             elevation: 4,
                             margin: const EdgeInsets.symmetric(vertical: 8),
@@ -231,6 +232,7 @@ class _MainPageState extends State<MainPage> {
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
                           final expense = snapshot.data![index];
+                          debugPrint("expense ${expense.toMap()}");
                           return Card(
                             elevation: 4,
                             margin: const EdgeInsets.symmetric(vertical: 8),

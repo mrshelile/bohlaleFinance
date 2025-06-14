@@ -25,6 +25,8 @@ class _FinancialdetailsState extends State<Financialdetails> {
 
   void _loadData() {
     _deptsFuture = Dept.getAll();
+    // print deptsFuture using debugPrint
+   
     _unpaidLoansFuture = Dept.getAllTakenLoans();
   }
 
@@ -66,6 +68,7 @@ class _FinancialdetailsState extends State<Financialdetails> {
                   child: FutureBuilder<List<Dept>>(
                     future: _deptsFuture,
                     builder: (context, snapshot) {
+                      
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       }
@@ -77,6 +80,7 @@ class _FinancialdetailsState extends State<Financialdetails> {
                         itemCount: depts.length,
                         itemBuilder: (context, index) {
                           final dept = depts[index];
+                          debugPrint(dept.toMap().toString());
                           return Card(
                             elevation: 4,
                             margin: const EdgeInsets.symmetric(vertical: 8),
@@ -133,6 +137,7 @@ class _FinancialdetailsState extends State<Financialdetails> {
                         itemCount: unpaidLoans.length,
                         itemBuilder: (context, index) {
                           final unpaidLoan = unpaidLoans[index];
+                          debugPrint("Unpaid Loan: ${unpaidLoan}");
                           return Card(
                             elevation: 4,
                             margin: const EdgeInsets.symmetric(vertical: 8),

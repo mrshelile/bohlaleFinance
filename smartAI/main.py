@@ -181,3 +181,7 @@ async def recommend_loan_all(req: RecommendationRequest):
 
     recommendations, message = generate_recommendations(req.user_profile, req.loan_options)
     return RecommendationResponse(recommendations=recommendations, message=message)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

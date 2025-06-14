@@ -1,3 +1,4 @@
+import 'package:bohlalefinance/services/smartAI.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -63,11 +64,195 @@ class FinancialInsightsChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
-    return FutureBuilder<List<Map<String, dynamic>>>(
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+      onPressed: () async{
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("AI Processing wait a few"),
+              backgroundColor: Colors.amber,
+            ),
+          );
+       final ai = await SmartAIcallService.create();
+       final res = await ai.getLoanRecommendation();
+       debugPrint(res.toMap().toString());
+        if (res.toMap().containsKey('recommendations')) {
+          final List recs = res.toMap()['recommendations'];
+          if (recs.isEmpty && res.toMap().containsKey('message')) {
+            // Show a cool popup for bad debt-to-income ratio
+            showDialog(
+              context: context,
+              builder: (context) => Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          backgroundColor: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 56),
+                const SizedBox(height: 18),
+                Text(
+            "Loan Not Recommended",
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.red[900],
+              letterSpacing: 0.5,
+            ),
+            textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 14),
+                Text(
+            "Your debt-to-income ratio is too high or your disposable income is negative. You currently do not qualify for any new loans.",
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[800],
+            ),
+            textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 18),
+                ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            ),
+            icon: const Icon(Icons.close, color: Colors.white),
+            label: const Text(
+              "Close",
+              style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+          ),
+              ),
+            );
+          } else {
+            final top4 = recs.take(4).toList();
+            showDialog(
+              context: context,
+              builder: (context) => Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          backgroundColor: Colors.white,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+            Icon(Icons.recommend, color: Colors.indigo, size: 48),
+            const SizedBox(height: 12),
+            Text(
+              "Top Loan Recommendations",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.indigo[900],
+                letterSpacing: 0.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 18),
+            ...top4.map((rec) => Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.indigo[50],
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+              color: Colors.indigo.withOpacity(0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Colors.indigo[100],
+                  child: Icon(Icons.account_balance, color: Colors.indigo[700]),
+                ),
+                title: Text(
+                  rec['name_of_company'] ?? '',
+                  style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: Colors.indigo[900],
+                  ),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+              Text(
+                "Interest: ${(rec['interest'] * 100).toStringAsFixed(2)}%",
+                style: TextStyle(color: Colors.indigo[700], fontSize: 13),
+              ),
+              Text(
+                "Term: ${rec['payment_term']} months",
+                style: TextStyle(color: Colors.indigo[700], fontSize: 13),
+              ),
+              Text(
+                "Monthly: R${rec['monthly_payment'].toStringAsFixed(2)}",
+                style: TextStyle(color: Colors.indigo[900], fontWeight: FontWeight.w600, fontSize: 14),
+              ),
+                  ],
+                ),
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+              Text(
+                "Min: R${rec['min_amount'].toStringAsFixed(0)}",
+                style: TextStyle(fontSize: 12, color: Colors.indigo[700]),
+              ),
+              Text(
+                "Max: R${rec['max_amount'].toStringAsFixed(0)}",
+                style: TextStyle(fontSize: 12, color: Colors.indigo[700]),
+              ),
+                  ],
+                ),
+              ),
+            )),
+            const SizedBox(height: 18),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.indigo,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
+              icon: const Icon(Icons.check_circle, color: Colors.white),
+              label: const Text(
+                "Close",
+                style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+                ],
+              ),
+            ),
+          ),
+              ),
+            );
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("No recommendations found."),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+        
+      },
+      backgroundColor: Colors.indigo,
+      child: const Icon(Icons.analytics, color: Colors.white),
+      tooltip: 'Analyse',
+      ),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
       future: Dept.getAllTakenLoans(),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return const Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
         }
         final loans = snapshot.data ?? [];
         final monthlyTotals = _groupLoansByMonth(loans);
@@ -76,209 +261,213 @@ class FinancialInsightsChart extends StatelessWidget {
 
         // Fill values for all months, even if 0
         final values = monthKeys
-            .map((k) => monthlyTotals.containsKey(k) ? monthlyTotals[k]! : 0.0)
-            .toList();
+          .map((k) => monthlyTotals.containsKey(k) ? monthlyTotals[k]! : 0.0)
+          .toList();
 
         // If all values are zero, set min/max for chart
         final minY = values.any((v) => v != 0)
-            ? (values.reduce((a, b) => a < b ? a : b) * 0.95)
-            : 0.0;
+          ? (values.reduce((a, b) => a < b ? a : b) * 0.95)
+          : 0.0;
         final maxY = values.any((v) => v != 0)
-            ? (values.reduce((a, b) => a > b ? a : b) * 1.05)
-            : 1000.0;
+          ? (values.reduce((a, b) => a > b ? a : b) * 1.05)
+          : 1000.0;
 
         final spots = List.generate(
-          values.length,
-          (i) => FlSpot(i.toDouble(), values[i]),
+        values.length,
+        (i) => FlSpot(i.toDouble(), values[i]),
         );
 
         return SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Column(
-            children: [
-              SizedBox(height: MediaQuery.of(context).size.height * 0.12),
-              Text(
-                "Debt Growth",
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.indigo[900],
-                  letterSpacing: 1.5,
-                  shadows: [
-                    Shadow(
-                      color: Colors.indigo.withOpacity(0.15),
-                      blurRadius: 8,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.08),
+            Text(
+            "Debt Growth",
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Colors.indigo[900],
+              letterSpacing: 1.2,
+              shadows: [
+              Shadow(
+                color: Colors.indigo.withOpacity(0.10),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
               ),
-              const SizedBox(height: 18),
-              Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.indigo[50]!, Colors.white],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.indigo.withOpacity(0.10),
-                        blurRadius: 24,
-                        offset: const Offset(0, 12),
-                      ),
-                    ],
-                  ),
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  padding: const EdgeInsets.all(20),
-                  height: 340,
-                  width: 420,
-                  child: LineChart(
-                    LineChartData(
-                      minY: minY,
-                      maxY: maxY,
-                      gridData: FlGridData(
-                        show: true,
-                        drawVerticalLine: true,
-                        horizontalInterval:
-                            ((maxY - minY) / 5).clamp(100, 1000),
-                        verticalInterval: 1,
-                        getDrawingHorizontalLine: (value) => FlLine(
-                          color: Colors.indigo[100],
-                          strokeWidth: 1,
-                        ),
-                        getDrawingVerticalLine: (value) => FlLine(
-                          color: Colors.indigo[100],
-                          strokeWidth: 1,
-                        ),
-                      ),
-                      titlesData: FlTitlesData(
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: 48,
-                            getTitlesWidget: (value, meta) => Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: Text(
-                                value.toInt().toString(),
-                                style: TextStyle(
-                                  color: Colors.indigo[700],
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: 36,
-                            getTitlesWidget: (value, meta) {
-                              int idx = value.toInt();
-                              if (idx >= 0 && idx < monthLabels.length) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(top: 6.0),
-                                  child: Text(
-                                    monthLabels[idx],
-                                    style: TextStyle(
-                                      color: Colors.indigo[700],
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                );
-                              }
-                              return const SizedBox.shrink();
-                            },
-                          ),
-                        ),
-                        rightTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
-                        topTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
-                      ),
-                      borderData: FlBorderData(
-                        show: true,
-                        border: Border.all(
-                            color: Colors.indigo[100]!, width: 1.5),
-                      ),
-                      lineBarsData: [
-                        LineChartBarData(
-                          spots: spots,
-                          isCurved: true,
-                          gradient: LinearGradient(
-                            colors: [Colors.indigo, Colors.indigoAccent],
-                          ),
-                          barWidth: 5,
-                          isStrokeCapRound: true,
-                          dotData: FlDotData(
-                            show: true,
-                            getDotPainter: (spot, percent, bar, index) =>
-                                FlDotCirclePainter(
-                              radius: 6,
-                              color: Colors.white,
-                              strokeColor: Colors.indigo,
-                              strokeWidth: 3,
-                            ),
-                          ),
-                          belowBarData: BarAreaData(
-                            show: true,
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.indigo.withOpacity(0.18),
-                                Colors.indigo.withOpacity(0.01)
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                          ),
-                        ),
-                      ],
-                      lineTouchData: LineTouchData(
-                        touchTooltipData: LineTouchTooltipData(
-                          getTooltipItems: (touchedSpots) {
-                            return touchedSpots.map((spot) {
-                              return LineTooltipItem(
-                                "${monthLabels[spot.x.toInt()]}\nR${spot.y.toStringAsFixed(2)}",
-                                TextStyle(
-                                  color: Colors.indigo[900],
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              );
-                            }).toList();
-                          },
-                        ),
-                        handleBuiltInTouches: true,
-                      ),
-                    ),
-                    duration: const Duration(milliseconds: 900),
-                  ),
-                ),
+              ],
+            ),
+            ),
+            const SizedBox(height: 16),
+            Center(
+            child: Container(
+              decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.indigo[50]!, Colors.white],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _legendDot(Colors.indigo),
-                  const SizedBox(width: 8),
-                  Text(
-                    "Actual Debt",
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                color: Colors.indigo.withOpacity(0.08),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+                ),
+              ],
+              ),
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.all(18),
+              height: 340,
+              width: double.infinity,
+              child: LineChart(
+              LineChartData(
+                minY: minY,
+                maxY: maxY,
+                gridData: FlGridData(
+                show: true,
+                drawVerticalLine: true,
+                horizontalInterval:
+                  ((maxY - minY) / 5).clamp(100, 1000),
+                verticalInterval: 1,
+                getDrawingHorizontalLine: (value) => FlLine(
+                  color: Colors.indigo[100],
+                  strokeWidth: 1,
+                ),
+                getDrawingVerticalLine: (value) => FlLine(
+                  color: Colors.indigo[100],
+                  strokeWidth: 1,
+                ),
+                ),
+                titlesData: FlTitlesData(
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                  showTitles: true,
+                  reservedSize: 48,
+                  getTitlesWidget: (value, meta) => Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Text(
+                    value.toInt().toString(),
                     style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.indigo[900],
+                      color: Colors.indigo[700],
                       fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
                     ),
                   ),
+                  ),
+                ),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                  showTitles: true,
+                  reservedSize: 36,
+                  getTitlesWidget: (value, meta) {
+                    int idx = value.toInt();
+                    if (idx >= 0 && idx < monthLabels.length) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 6.0),
+                      child: Text(
+                      monthLabels[idx],
+                      style: TextStyle(
+                        color: Colors.indigo[700],
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                      ),
+                    );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                  ),
+                ),
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false)),
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false)),
+                ),
+                borderData: FlBorderData(
+                show: true,
+                border: Border.all(
+                  color: Colors.indigo[100]!, width: 1.5),
+                ),
+                lineBarsData: [
+                LineChartBarData(
+                  spots: spots,
+                  isCurved: true,
+                  gradient: LinearGradient(
+                  colors: [Colors.indigo, Colors.indigoAccent],
+                  ),
+                  barWidth: 5,
+                  isStrokeCapRound: true,
+                  dotData: FlDotData(
+                  show: true,
+                  getDotPainter: (spot, percent, bar, index) =>
+                    FlDotCirclePainter(
+                    radius: 6,
+                    color: Colors.white,
+                    strokeColor: Colors.indigo,
+                    strokeWidth: 3,
+                  ),
+                  ),
+                  belowBarData: BarAreaData(
+                  show: true,
+                  gradient: LinearGradient(
+                    colors: [
+                    Colors.indigo.withOpacity(0.18),
+                    Colors.indigo.withOpacity(0.01)
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  ),
+                ),
                 ],
+                lineTouchData: LineTouchData(
+                touchTooltipData: LineTouchTooltipData(
+                  getTooltipItems: (touchedSpots) {
+                  return touchedSpots.map((spot) {
+                    return LineTooltipItem(
+                    "${monthLabels[spot.x.toInt()]}\nR${spot.y.toStringAsFixed(2)}",
+                    TextStyle(
+                      color: Colors.indigo[900],
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                    );
+                  }).toList();
+                  },
+                ),
+                handleBuiltInTouches: true,
+                ),
               ),
-              const SizedBox(height: 30),
+              duration: const Duration(milliseconds: 900),
+              ),
+            ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _legendDot(Colors.indigo),
+              const SizedBox(width: 8),
+              Text(
+              "Actual Debt",
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.indigo[900],
+                fontWeight: FontWeight.w600,
+              ),
+              ),
             ],
+            ),
+            const SizedBox(height: 30),
+          ],
           ),
+        ),
         );
       },
+      ),
     );
   }
 
